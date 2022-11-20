@@ -1,24 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import GlobalStyle from "./GlobalStyle"
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import WalletPage from "./pages/WalletPage";
+import EntryPage from "./pages/EntryPage";
+import WithdrawPage from "./pages/WithdrawPage";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+    <GlobalStyle />
+    <Routes>
+      <Route path = "/" element ={<WithdrawPage/>}/>
+{/*       <Route path = "/cadastro" element ={<RegisterPage/>}/>
+      <Route path = "/carteira" element ={<WalletPage/>}/>
+      <Route path = "/entrada" element ={<EntryPage/>}/>
+      <Route path = "/saida" element ={<OutputPage/>}/> */}
+    </Routes>
+    </BrowserRouter>
   );
 }
 
