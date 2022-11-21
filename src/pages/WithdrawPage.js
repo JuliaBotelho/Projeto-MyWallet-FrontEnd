@@ -11,7 +11,7 @@ export default function WithdrawPage() {
     const [formMinus, setFormMinus] = useState ({description:"",ammount:"", type:"minus"})
     const navigate = useNavigate()
 
-    const{ userData } = useContext(AuthContext)
+    const{ userData, setRender, render } = useContext(AuthContext)
     const config = { headers: {"Authorization" : `Bearer ${userData.token}`}}
 
     function handleWithdrawForm(e){
@@ -26,6 +26,7 @@ export default function WithdrawPage() {
         axios.post("http://localhost:5000/mywallet", body, config)
         .then(res=>{
             navigate("/carteira")
+            setRender(!render)
         })
         .catch(err => {
             console.log(err)

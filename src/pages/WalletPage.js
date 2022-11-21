@@ -1,44 +1,90 @@
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "../contextElements/auth";
+import axios from "axios";
 
 export default function WalletPage() {
-    const {userData} = useContext(AuthContext)
+    const [transactions, setTransactions] = useState([]);
+    const [total, setTotal] = useState(0)
+    const { userData, render, setRender } = useContext(AuthContext)
+
+    const config = { headers: { "Authorization": `Bearer ${userData.token}` } }
+
+    
+
+    useEffect(() => {
+        axios.get("http://localhost:5000/mywallet", config)
+            .then(res => {
+                setTransactions(res.data)
+                setTimeout(defineTotal(), 2000)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }, [render,total])
+
+    
+
+     function defineTotal() {
+        let sum = 0;
+        transactions.forEach((t) => t.type === "plus" ?
+            (
+                sum += Number(t.ammount)
+            ) : (
+                sum -= Number(t.ammount)
+            ))
+        setTotal(sum.toFixed(2))    
+           
+    } 
+    
+ 
+    
+
 
     return (
         <ContentWallet>
             <WalletHeader>
                 <h1>Olá {userData.name}</h1>
-                <ion-icon name="exit-outline"></ion-icon>
+                <Link to={"/"}>
+                    <ion-icon name="exit-outline"></ion-icon>
+                </Link>
             </WalletHeader>
-            <ExtractContent>
-                <ExtractMinus>
-                    <DataDesc>
-                        <h2>30/11</h2>
-                        <h3>Almoço da mãe</h3>
-                    </DataDesc>
-                    <h4>39,90</h4>
-                </ExtractMinus>
-                <ExtractPlus>
-                    <DataDesc>
-                        <h2>30/11</h2>
-                        <h3>Almoço da mãe</h3>
-                    </DataDesc>
-                    <h4>39,90</h4>
-                </ExtractPlus>
-                <h1>SALDO</h1>
-                <h5>251658</h5>
+            <ExtractContent>{transactions.length > 0 ? (
+                <>{transactions.map((t) => t.type === "plus" ? (
+                    <ExtractPlus>
+                        <DataDesc>
+                            <h2>{t.date}</h2>
+                            <h3> {t.description}</h3>
+                        </DataDesc>
+                        <h4>{Number(t.ammount).toFixed(2)}</h4>
+                    </ExtractPlus>
+                ) : (
+                    <ExtractMinus>
+                        <DataDesc>
+                            <h2>{t.date}</h2>
+                            <h3>{t.description}</h3>
+                        </DataDesc>
+                        <h4>{Number(t.ammount).toFixed(2)}</h4>
+                    </ExtractMinus>
+                ))}
+                    <h1>SALDO</h1>
+                    <>{total >= 0 ? (<h5>{total}</h5>):(<h6>{total}</h6>)}</>
+                </>
+            ) : (
+                <ExtractNoContent>Não há registros de entrada ou saída</ExtractNoContent>
+            )}
             </ExtractContent>
+
             <ButtonsContainer>
-                <Link to = {"/entrada"}>
-                    <button>
+                <Link to={"/entrada"}>
+                    <button onClick={()=>setRender(!render)}>
                         <ion-icon name="add-circle-outline"></ion-icon>
                         Nova entrada
                     </button>
                 </Link>
-                <Link to = {"/saida"}>
+                <Link to={"/saida"}>
                     <button>
                         <ion-icon name="remove-circle-outline"></ion-icon>
                         Nova saída
@@ -101,7 +147,17 @@ const ExtractContent = styled.div`
         right: 5px;
 
         font-family: 'Raleway', sans-serif;
-        color: #A328D6;
+        color: #03ac00;
+        font-size: 17px;
+        font-weight:400;
+    }
+    h6{
+        position: absolute;
+        bottom: 6px;
+        right: 5px;
+
+        font-family: 'Raleway', sans-serif;
+        color: #c70000;
         font-size: 17px;
         font-weight:400;
     }

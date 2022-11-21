@@ -10,7 +10,7 @@ export default function EntryPage() {
     const [formPlus, setFormPlus] = useState ({description:"",ammount:"", type:"plus"})
     const navigate = useNavigate()
 
-    const{ userData } = useContext(AuthContext)
+    const{ userData, setRender, render } = useContext(AuthContext)
     const config = { headers: {"Authorization" : `Bearer ${userData.token}`}}
 
     function handleEntryForm(e){
@@ -25,6 +25,7 @@ export default function EntryPage() {
         axios.post("http://localhost:5000/mywallet", body, config)
         .then(res=>{
             navigate("/carteira")
+            setRender(!render)
         })
         .catch(err => {
             console.log(err)
