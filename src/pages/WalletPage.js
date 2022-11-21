@@ -1,11 +1,16 @@
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+
+import { AuthContext } from "../contextElements/auth";
 
 export default function WalletPage() {
+    const {userData} = useContext(AuthContext)
+
     return (
         <ContentWallet>
             <WalletHeader>
-                <h1>Olá Fulano</h1>
+                <h1>Olá {userData.name}</h1>
                 <ion-icon name="exit-outline"></ion-icon>
             </WalletHeader>
             <ExtractContent>
@@ -27,14 +32,18 @@ export default function WalletPage() {
                 <h5>251658</h5>
             </ExtractContent>
             <ButtonsContainer>
-                <button>
-                    <ion-icon name="add-circle-outline"></ion-icon>
-                    Nova entrada
-                </button>
-                <button>
-                    <ion-icon name="remove-circle-outline"></ion-icon>
-                    Nova saída
-                </button>
+                <Link to = {"/entrada"}>
+                    <button>
+                        <ion-icon name="add-circle-outline"></ion-icon>
+                        Nova entrada
+                    </button>
+                </Link>
+                <Link to = {"/saida"}>
+                    <button>
+                        <ion-icon name="remove-circle-outline"></ion-icon>
+                        Nova saída
+                    </button>
+                </Link>
             </ButtonsContainer>
         </ContentWallet>
     )
@@ -192,5 +201,8 @@ const ButtonsContainer = styled.div`
     }
     ion-icon{
         font-size: 24px;
+    }
+    a{
+        text-decoration:none;
     }
 `

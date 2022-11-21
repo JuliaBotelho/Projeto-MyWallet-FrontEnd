@@ -1,28 +1,65 @@
 import styled from "styled-components";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState, useContext } from "react";
+import axios from "axios";
 
-export default function LoginPage(){
-    return(
+import { AuthContext } from "../contextElements/auth";
+
+export default function LoginPage() {
+    const[formLogin, setFormLogin] = useState({email:"",password:""})
+    const navigate = useNavigate()
+    const {setUserData} = useContext(AuthContext)
+
+    function handleFormLogin(e){
+        const {name, value} = e.target
+        setFormLogin({...formLogin, [name]:value})
+    }
+
+    function sendLoginData(e){
+
+        const body = formLogin
+
+        axios.post("http://localhost:5000/sign-in", body)
+        .then(res =>{
+            setUserData(res.data)
+            navigate("/carteira") 
+        })
+        .catch( err => {
+            console.log(err)
+            alert("Algo deu errado! Por Favor tente novamente!")
+        })
+    }
+
+    function onSubmitLoginActions(e){
+        e.preventDefault()
+        sendLoginData(e)
+    }
+
+    return (
         <ContentLogin>
             <LogoMain>MyWallet</LogoMain>
-            <FormLog>
+            <FormLog onSubmit = {onSubmitLoginActions}>
                 <input
-                name="email"
-                type="email"
-                placeholder="E-mail"
-                required
+                    name="email"
+                    type="email"
+                    value={formLogin.email}
+                    onChange={handleFormLogin}
+                    placeholder="E-mail"
+                    required
                 />
                 <input
-                name="password"
-                type="password"
-                placeholder="Senha"
-                required
+                    name="password"
+                    type="password"
+                    value={formLogin.password}
+                    onChange={handleFormLogin}
+                    placeholder="Senha"
+                    required
                 />
-                <button>Entrar</button>
+                <button type="submit">Entrar</button>
             </FormLog>
-            <RegisterLink>
-                Primeira vez? Cadastre-se!
-            </RegisterLink>
+            <Link to={"/cadastro"}>
+                <RegisterLink>Primeira vez? Cadastre-se!</RegisterLink>
+            </Link>
         </ContentLogin>
     )
 }
@@ -31,6 +68,9 @@ const ContentLogin = styled.div`
     display:flex;
     flex-direction:column;
     align-items:center;
+    a{
+        text-decoration:none;
+    }
 `
 
 const LogoMain = styled.h1`
@@ -89,4 +129,5 @@ export const RegisterLink = styled.h2`
     font-weight:700px;
     font-family: 'Raleway', sans-serif;
     color:#FFFFFF;
+
 `
